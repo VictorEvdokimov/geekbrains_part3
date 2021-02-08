@@ -1,0 +1,39 @@
+div, h3, p, header {
+    border: 1px solid red;
+}
+
+header {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    padding: 5px 10px;
+}
+
+.cart-button {
+    width: 100px;
+    height: 20px;
+    background-color: rgb(214, 203, 166);
+    border-radius: 10px;
+    border: 1px solid rgb(153, 147, 131);
+    margin-right: 10px;
+}
+
+.cart-button:active {
+    background-color: rgb(175, 169, 143);
+    border: 1px solid rgb(235, 227, 209);
+}
+
+.goods-list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 15px;
+}
+
+.goods-item {
+    padding: 10px;
+}
+
+.goods-item__img {
+    width: 100%;
+    height: 220px;
+}
