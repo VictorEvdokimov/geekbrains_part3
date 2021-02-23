@@ -5,21 +5,72 @@ const btnCart = document.querySelector('.cart-button');
 const btnCloseCartPopup = document.querySelector('.cart-popup__close');
 const cartPopupWrap = document.querySelector('.cartPopup-wrap');
 
-function makeGETRequest (url, callback) {
-    var xhr;
-    if (window.XMLHttpRequest) { 
-        xhr = new XMLHttpRequest();
-    } else if (window.ActiveXObject) {
-        xhr = new ActiveXObject("Microsoft.XMLHTTP");
+class Cart {
+    constructor() {
+        this.products = [];
     }
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4) {
-            callback(xhr.responseText); 
-        }
+
+    addOneGoodsItem(goodsItem) {
+        const cartSumPositions = document.querySelector('.cart-sumPositions');
+        this.products.push(goodsItem);
+        cartSumPositions.textContent = this.products.length;
     }
-    xhr.open('GET', url, true);
-    xhr.send(); 
+
+    removeOneGoodsItem(goodsItem) {
+        this.products.find((item, index) => {
+            if (item.product_name == goodsItem.product_name) {
+                this.products.splice(index, 1);
+                return true;
+            }
+            return false;
+        });
+    }
+
+    totalPrice() {
+        return this.products.reduce((sum, item)=> {
+            return sum + item.price;
+        },0);
+    }
 }
+
+const app = new Vue({
+    el: '#app',
+    data: {
+        goods: [],
+        filteredGoods: [],
+        searchLine: '',
+        cart: {},
+    },  
+
+    methods: {
+        itemFilter(event) {
+            this.filteredGoods = this.goods.filter((item)=> {
+                if(item.product_name.toUpperCase().includes(this.searchLine.toUpperCase())) {
+                    return item;
+                }
+            })
+
+        },
+        clickItem(good) {
+            this.cart.addOneGoodsItem(good); 
+        }
+    },
+
+    mounted() {
+        this.cart = new Cart();
+        fetch(`${API_URL}/catalogData.json`)
+            .then(response => {
+                return response.json();
+            })
+            .then(json => {
+                this.goods = json;
+                this.filteredGoods = this.goods;
+            })
+            .catch(error => {
+                alert('Error');
+            })
+    }
+});
 
 class GoodsItem {
     constructor(id, title, price) {
@@ -32,36 +83,9 @@ class GoodsItem {
 class GoodsList {
     constructor() {
         this.goods = [];
+        this.filteredGoods = [];
     }
     
-    fetchGoods() {
-        return fetch(`${API_URL}/catalogData.json`)
-        .then(response => {
-            return response.json();
-        })
-        .then(json => {
-            list.goods = json;
-            // list.render();
-            
-        })
-        // .then(() => {
-        //     let product = document.querySelectorAll('.goods-item'); 
-        //     product.forEach(elem => {
-        //     elem.addEventListener('click', clickItem)
-        //     });
-        // })
-        .catch(error => {
-            alert('Error');
-        })
-
-        // this.goods = [                              
-        //     { title: 'Shirt', price: 150 },
-        //     { title: 'Socks', price: 50 },
-        //     { title: 'Jacket', price: 350 },
-        //     { title: 'Shoes', price: 250 },
-        // ];
-    }
-
     summPrice() {
         return this.goods.reduce((sum, item)=> {
             return sum + item.price;
@@ -70,9 +94,15 @@ class GoodsList {
 
     render() {
         let list = document.querySelector('.goods-list');
-        this.goods.forEach(elem => {
+        this.filteredGoods.forEach(elem => {
             list.appendChild(createCard(new GoodsItem(elem.id_product, elem.product_name, elem.price)));
         });
+    }
+
+    filterGoods(value) {
+        const regexp = new RegExp(value, 'i');
+        this.filteredGoods = this.goods.filter(good => regexp.test(good.product_name));
+        this.render();
     }
 }
 
@@ -134,61 +164,18 @@ class MenuPopup {
     }
 }
 
-class Cart {
-    constructor() {
-        this.products = [];
-    }
-
-    addOneGoodsItem(goodsItem) {
-        const cartSumPositions = document.querySelector('.cart-sumPositions');
-        this.products.push(goodsItem);
-        cartSumPositions.textContent = this.products.length;
-    }
-
-    removeOneGoodsItem(goodsItem) {
-        this.products.find((item, index) => {
-            if (item.product_name == goodsItem.product_name) {
-                this.products.splice(index, 1);
-                return true;
-            }
-            return false;
-        });
-    }
-
-    totalPrice() {
-        return this.products.reduce((sum, item)=> {
-            return sum + item.price;
-        },0);
-    }
-}
 
 function createCard(item) {                       
         let rand = Math.floor(Math.random() * 100) + 1;
-        let goodsItem = document.createElement('div');
-        goodsItem.classList.add('goods-item');
-        goodsItem.innerHTML = `<img class="goods-item__img" src="https://picsum.photos/seed/${rand}/200" alt="product"><h3>${item.product_name}</h3><p>${item.price}</p>`;
+        // let goodsItem = document.createElement('div');
+        // goodsItem.classList.add('goods-item');
+        // goodsItem.innerHTML = `<img class="goods-item__img" src="https://picsum.photos/seed/${rand}/200" alt="product"><h3>${item.product_name}</h3><p>${item.price}</p>`;
         goodsItem.entity = item;
         return goodsItem;
 }
 
-function clickItem(event) {
-    cart.addOneGoodsItem(event.currentTarget.entity); 
-}
-
-const cart = new Cart();
 const menuPopup = new MenuPopup();
 const list = new GoodsList();
-
-list.fetchGoods()
-.then(() => {
-    list.render();
-})
-.then(() => {
-    let product = document.querySelectorAll('.goods-item'); 
-    product.forEach(elem => {
-    elem.addEventListener('click', clickItem)
-    });
-})
 
 btnCart.addEventListener('click', menuPopup.showPopup.bind(menuPopup));
 btnCloseCartPopup.addEventListener('click', menuPopup.closePopup);

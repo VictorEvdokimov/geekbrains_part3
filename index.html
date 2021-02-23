@@ -8,33 +8,40 @@
     <title>Document</title>
 </head>
 <body>
-    <header>
-        <button class="cart-button" type="button">Корзина</button>
-        <div class="cart-sumPositions"></div>
-        <div class="cartPopup-wrap">
-            <div class="cart-popup">
-                <div class="cart-popup__close">&#10060</div>
-                <!-- <div class="cart-popup__wrapGoods">
-                    <h2 class="cart-popup__goods">Goods</h2>
-                    <p class="cart-popup__goodsTitle">Title</p>
-                    <p class="cart-popup__goodsPrice">100</p>
-                </div> -->
-                <div class="cart-popup__resultSum">
-                    Summ
+    <div id="app">
+        <header>
+            <input class="search-input" type="text" 
+            @input="itemFilter($event)"
+            v-model="searchLine" placeholder="search">
+            <button class="cart-button" type="button">Корзина</button>
+            <div class="cart-sumPositions"></div>
+            <div class="cartPopup-wrap">
+                <div class="cart-popup">
+                    <div class="cart-popup__close">&#10060</div>
+                    <!-- <div class="cart-popup__wrapGoods">
+                        <h2 class="cart-popup__goods">Goods</h2>
+                        <p class="cart-popup__goodsTitle">Title</p>
+                        <p class="cart-popup__goodsPrice">100</p>
+                    </div> -->
+                    <div class="cart-popup__resultSum">
+                        Summ
+                    </div>
+                    <button class="cart-popup__btn" type="button">Купить</button>
                 </div>
-                <button class="cart-popup__btn" type="button">Купить</button>
             </div>
-        </div>
-    </header>
-    <main>
-        <div class="goods-list">
-            <!-- <div class="goods-item">
-                <img class="goods-item__img" src="https://picsum.photos/seed/5/200" alt="product">
-                <h3>${title}</h3>
-                <p>${price}</p>
-            </div> -->
-        </div>
-    </main>
+            
+        </header>
+        <main>
+            <div class="goods-list">
+                <div class="goods-item" v-for="good in filteredGoods" @click="clickItem(good)">
+                    <img class="goods-item__img" src="https://picsum.photos/seed/5/200" alt="product">
+                    <h3>{{ good.product_name }}</h3>
+                    <p>{{ good.price }}</p>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
