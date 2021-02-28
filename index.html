@@ -15,25 +15,25 @@
             v-model="searchLine" placeholder="search">
             <button class="cart-button" type="button" @click="showPopup()">Корзина</button>
             <div class="cart-sumPositions">{{ cart.products.length }}</div>
+
             <div class="cartPopup-wrap" v-if="isVisibleCart">
                 <div class="cart-popup">
-                    <div class="cart-popup__close">&#10060</div>
+                    <div class="cart-popup__close" @click="showPopup()">&#10060</div>
                     <div class="cart-popup__wrapGoods" v-for="product in cart.products">
                         <h2 class="cart-popup__goods">Goods</h2>
                         <p class="cart-popup__goodsTitle">{{ product.productName }}</p>
                         <p class="cart-popup__goodsPrice">{{ product.price }}</p>
                         <button class="cart-popup__btnDelete" @click="removeOneGoodsItem(product)">Удалить</button>
                     </div>
-                    <div class="cart-popup__resultSum">
-                        {{ totalPrice() }}
-                    </div>
+                    <div class="cart-popup__resultSum">{{ totalPrice() }}</div>
                     <button class="cart-popup__btn" type="button">Купить</button>
                 </div>
             </div>
             
         </header>
         <main>
-            <div class="goods-list">
+            <div class="goods-list" v-model="goods">
+                <p v-if="goods.length == 0">"Loading...."</p>
                 <div class="goods-item" v-for="good in filteredGoods" @click="clickItem(good)">
                     <img class="goods-item__img" src="https://picsum.photos/seed/5/200" alt="product">
                     <h3>{{ good.productName }}</h3>

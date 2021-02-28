@@ -56,11 +56,6 @@ const app = new Vue({
             this.cart.products.push(good);
         },
 
-        showPopup() {
-            this.isVisibleCart = true;
-            
-        },
-
         removeOneGoodsItem(goodsItem) {
             this.cart.products.find((item, index) => {
                 if (item.productName == goodsItem.productName) {
@@ -70,12 +65,24 @@ const app = new Vue({
                 return false;
             });
         },
+
         totalPrice() {
             return this.cart.products.reduce((sum, item)=> {
-                let reg = /^\d*.\d{1,3}/;
-                return sum + Number(item.price.match(reg));
+                let reg = /^\d+\.\d{1,3}/;
+                const res = sum + Number(item.price.match(reg));
+                console.log(res);
+                return res;
             },0);
-        }
+        },
+
+        showPopup() {
+            if (!this.isVisibleCart) {
+                this.isVisibleCart = true;
+            } else {
+                this.isVisibleCart = false;
+            }
+            
+        },
     },
 
 
