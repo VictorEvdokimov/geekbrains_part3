@@ -1,6 +1,6 @@
 'use script'
 
-const API_URL = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';
+const API_URL = 'https://mock-api-builder.vercel.app/api/schema/get';
 const btnCart = document.querySelector('.cart-button');
 const btnCloseCartPopup = document.querySelector('.cart-popup__close');
 const cartPopupWrap = document.querySelector('.cartPopup-wrap');
@@ -10,27 +10,27 @@ class Cart {
         this.products = [];
     }
 
-    addOneGoodsItem(goodsItem) {
-        const cartSumPositions = document.querySelector('.cart-sumPositions');
-        this.products.push(goodsItem);
-        cartSumPositions.textContent = this.products.length;
-    }
+    // addOneGoodsItem(goodsItem) {
+    //     const cartSumPositions = document.querySelector('.cart-sumPositions');
+    //     this.products.push(goodsItem);
+    //     cartSumPositions.textContent = this.products.length;
+    // }
 
-    removeOneGoodsItem(goodsItem) {
-        this.products.find((item, index) => {
-            if (item.product_name == goodsItem.product_name) {
-                this.products.splice(index, 1);
-                return true;
-            }
-            return false;
-        });
-    }
+    // removeOneGoodsItem(goodsItem) {
+    //     this.products.find((item, index) => {
+    //         if (item.productName == goodsItem.productName) {
+    //             this.products.splice(index, 1);
+    //             return true;
+    //         }
+    //         return false;
+    //     });
+    // }
 
-    totalPrice() {
-        return this.products.reduce((sum, item)=> {
-            return sum + item.price;
-        },0);
-    }
+    // totalPrice() {
+    //     return this.products.reduce((sum, item)=> {
+    //         return sum + item.price;
+    //     },0);
+    // }
 }
 
 const app = new Vue({
@@ -40,25 +40,48 @@ const app = new Vue({
         filteredGoods: [],
         searchLine: '',
         cart: {},
+        isVisibleCart: false,
     },  
 
     methods: {
         itemFilter(event) {
             this.filteredGoods = this.goods.filter((item)=> {
-                if(item.product_name.toUpperCase().includes(this.searchLine.toUpperCase())) {
+                if(item.productName.toUpperCase().includes(this.searchLine.toUpperCase())) {
                     return item;
                 }
             })
 
         },
         clickItem(good) {
-            this.cart.addOneGoodsItem(good); 
+            this.cart.products.push(good);
+        },
+
+        showPopup() {
+            this.isVisibleCart = true;
+            
+        },
+
+        removeOneGoodsItem(goodsItem) {
+            this.cart.products.find((item, index) => {
+                if (item.productName == goodsItem.productName) {
+                    this.cart.products.splice(index, 1);
+                    return true;
+                }
+                return false;
+            });
+        },
+        totalPrice() {
+            return this.cart.products.reduce((sum, item)=> {
+                let reg = /^\d*.\d{1,3}/;
+                return sum + Number(item.price.match(reg));
+            },0);
         }
     },
 
+
     mounted() {
         this.cart = new Cart();
-        fetch(`${API_URL}/catalogData.json`)
+        fetch(`${API_URL}/602c166a89c4a60009ef7046`)
             .then(response => {
                 return response.json();
             })
@@ -164,7 +187,6 @@ class MenuPopup {
     }
 }
 
-
 function createCard(item) {                       
         let rand = Math.floor(Math.random() * 100) + 1;
         // let goodsItem = document.createElement('div');
@@ -175,7 +197,7 @@ function createCard(item) {
 }
 
 const menuPopup = new MenuPopup();
-const list = new GoodsList();
+// const list = new GoodsList();
 
 btnCart.addEventListener('click', menuPopup.showPopup.bind(menuPopup));
 btnCloseCartPopup.addEventListener('click', menuPopup.closePopup);

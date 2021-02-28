@@ -13,18 +13,19 @@
             <input class="search-input" type="text" 
             @input="itemFilter($event)"
             v-model="searchLine" placeholder="search">
-            <button class="cart-button" type="button">Корзина</button>
-            <div class="cart-sumPositions"></div>
-            <div class="cartPopup-wrap">
+            <button class="cart-button" type="button" @click="showPopup()">Корзина</button>
+            <div class="cart-sumPositions">{{ cart.products.length }}</div>
+            <div class="cartPopup-wrap" v-if="isVisibleCart">
                 <div class="cart-popup">
                     <div class="cart-popup__close">&#10060</div>
-                    <!-- <div class="cart-popup__wrapGoods">
+                    <div class="cart-popup__wrapGoods" v-for="product in cart.products">
                         <h2 class="cart-popup__goods">Goods</h2>
-                        <p class="cart-popup__goodsTitle">Title</p>
-                        <p class="cart-popup__goodsPrice">100</p>
-                    </div> -->
+                        <p class="cart-popup__goodsTitle">{{ product.productName }}</p>
+                        <p class="cart-popup__goodsPrice">{{ product.price }}</p>
+                        <button class="cart-popup__btnDelete" @click="removeOneGoodsItem(product)">Удалить</button>
+                    </div>
                     <div class="cart-popup__resultSum">
-                        Summ
+                        {{ totalPrice() }}
                     </div>
                     <button class="cart-popup__btn" type="button">Купить</button>
                 </div>
@@ -35,7 +36,7 @@
             <div class="goods-list">
                 <div class="goods-item" v-for="good in filteredGoods" @click="clickItem(good)">
                     <img class="goods-item__img" src="https://picsum.photos/seed/5/200" alt="product">
-                    <h3>{{ good.product_name }}</h3>
+                    <h3>{{ good.productName }}</h3>
                     <p>{{ good.price }}</p>
                 </div>
             </div>
