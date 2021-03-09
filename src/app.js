@@ -1,85 +1,11 @@
-'use script'
+'use script' 
+
+import './style.css';
+import product from './components/product.js';
+import cartPopupComponent from './components/cartPopup.js';
+import searchInputComponent from './components/searchInput.js';
 
 const API_URL = 'https://mock-api-builder.vercel.app/api/schema/get';
-const btnCart = document.querySelector('.cart-button');
-const btnCloseCartPopup = document.querySelector('.cart-popup__close');
-const cartPopupWrap = document.querySelector('.cartPopup-wrap');
-
-class Cart {
-    constructor() {
-        this.products = [];
-    }
-}
-
-Vue.component('cart-popup', {
-    props: ['products', 'close_function'],
-   
-    template: 
-    `<div class="cartPopup-wrap">
-        <div class="cart-popup">
-            <div class="cart-popup__close" @click="close_function()">&#10060</div>
-            <product v-for="productCart in products" :product="productCart" :remove_product="removeOneGoodsItem"></product>
-            <div class="cart-popup__resultSum">{{ totalPrice() }}</div>
-            <button class="cart-popup__btn" type="button">Купить</button>
-        </div>
-    </div>`,
-
-    methods: {
-        totalPrice: function() {
-            return this.products.reduce((sum, item)=> {
-                let reg = /^\d+\.\d{1,3}/;
-                const res = sum + Number(item.price.match(reg));
-                return res;
-            },0).toFixed(2);
-        },
-
-        removeOneGoodsItem: function(event) {
-            this.products.find((item, index) => {
-                if (item.productName == event.productName) {
-                    this.products.splice(index, 1);
-                    return true;
-                }
-                return false;
-            });
-        }
-    }
-});
-
-Vue.component('product', {
-    props: ['product', 'remove_product'],
-    template: 
-    `<div class="cart-popup__wrapGoods" >
-        <h2 class="cart-popup__goods">Goods</h2>
-        <p class="cart-popup__goodsTitle">{{ product.productName }}</p>
-        <p class="cart-popup__goodsPrice">{{ product.price }}</p>
-        <button class="cart-popup__btnDelete" @click="remove_product(product)">Удалить</button>
-    </div>`,
-});
-
-Vue.component('search-input', {
-    props: ['origingoods', 'filtergoods'],
-    data() {
-        return {
-            searchLine: ''
-        }
-    },
-    template: 
-    `<input class="search-input" 
-    type="text" 
-    @input="itemFilter($event)"
-    v-model="searchLine" 
-    placeholder="search">`,
-
-    methods: {
-        itemFilter: function(event) {
-            this.$emit('update:filtergoods', this.origingoods.filter((item)=> {
-                if(item.productName.toUpperCase().includes(this.searchLine.toUpperCase())) {
-                    return item;
-                }
-            }))
-        },
-    },
-});
 
 const app = new Vue({
     el: '#app',
@@ -109,7 +35,6 @@ const app = new Vue({
 
 
     mounted() {
-        this.cart = new Cart();
         fetch(`${API_URL}/602c166a89c4a60009ef7046`)
             .then(response => {
                 return response.json();
