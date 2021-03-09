@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        <header>
+            <search-input :origingoods="goods" :filtergoods.sync="filteredGoods"></search-input>
+            <button class="cart-button" type="button" @click="showPopup()">Корзина</button>
+            <div class="cart-sumPositions">{{ cart.products.length }}</div>
+
+            <cart-popup v-if="isVisibleCart"  :close_function="showPopup" :products="cart.products"></cart-popup>
+            
+        </header>
+        <main>
+            <div class="goods-list">
+                <p v-if="goods && goods.length == 0">"Loading...."</p>
+                <!-- <p v-if="filteredGoods && filteredGoods.length == 0">"Not found"</p> -->
+                <div class="goods-item" v-for="good in filteredGoods" @click="clickItem(good)">
+                    <img class="goods-item__img" src="https://picsum.photos/seed/5/200" alt="product">
+                    <h3>{{ good.productName }}</h3>
+                    <p>{{ good.price }}</p>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+    <script src="./build.js"></script>
+</body>
+</html>
